@@ -27,7 +27,13 @@ type ResponseShow struct {
         Data    Employee
 }
 
+type ResponseInsert struct {
+	Status int `json:"status"`
+	Message string `json:"message"`
+}
 
+
+// pendefinisian fungsi dbConn
 func dbConn() (db *sql.DB) {
     dbDriver := "mysql"
     db, err := sql.Open(dbDriver, "root:supersecret@tcp(172.17.0.2:3306)/goblog")
@@ -37,6 +43,7 @@ func dbConn() (db *sql.DB) {
     return db
 }
 
+// pendefinisian fungsi Index
 func Index(w http.ResponseWriter, r *http.Request) {
     var response Response
     db := dbConn()
@@ -99,6 +106,7 @@ func Show(w http.ResponseWriter, r *http.Request) {
 
 func Insert(w http.ResponseWriter, r *http.Request) {
     var u Employee
+    var response ResponseInsert
 
     if r.Body == nil {
         http.Error(w, "Please send a request body", 400)
@@ -125,8 +133,14 @@ func Insert(w http.ResponseWriter, r *http.Request) {
         insForm.Exec(name, city)
         log.Println("INSERT: Name: " + name + " | City: " + city)
     }
+
+    response.Status = 1
+    response.Message = "Success"
+    w.Header().Set("Content-Type", "application/json")
+    json.NewEncoder(w).Encode(response)
+
     defer db.Close()
-    http.Redirect(w, r, "/", 301)
+    // http.Redirect(w, r, "/", 301)
 }
 
 func main() {
