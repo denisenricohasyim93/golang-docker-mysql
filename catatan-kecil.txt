@@ -1,0 +1,2 @@
+docker run --name mysql-server -e MYSQL_ROOT_PASSWORD=supersecret -d -p 3306:3306 -it mysql:latest
+docker run --name golang-server -d -p 8080:8080 -it golang:latest
